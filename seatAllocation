@@ -1,0 +1,144 @@
+import { Component, OnInit } from '@angular/core';
+import { element, setClassMetadata } from '@angular/core/src/render3';
+import { empty } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  title = 'my-app';
+  svg;
+  path:string;
+  num:any=1;
+  cx:number;
+  cy:number;
+  x0:any;
+  x2:any;
+  y2:any;
+  x3:any;
+  y3:any;
+  x4:any;
+  y4:any;
+  x5:any;
+  y5:any;
+  x6:any;
+  y6:any;
+  classname:string;
+  y0:any;
+  count:number=0;
+  gradient:number;
+ r:number;
+ distance:any;
+ tanpowVal:number;
+ sinVal:number;
+ cosVal:number;
+ seats:number;
+ range:number;
+ id:any=1;
+ k:any=1;
+ Aseats = [];
+
+  currentPosition: { x: number, y: number } = {
+    x: 0,
+    y: 0  
+  }
+  ngOnInit() {
+    this.svg = document.getElementById('svg');
+    
+
+  }
+  location(e){
+  
+    this.classname="invisible";
+    this.x6=this.x5;
+    this.y6=this.y5;
+    var x = e.clientX;
+    var y = e.clientY;
+    this.x2=x;
+    this.y2=y;
+    if((this.count)%2!=0)
+    {
+      this.distance=Math.sqrt(Math.pow((this.x2-this.x6),2)+Math.pow((this.y2-this.y6),2));
+      this.seats=Math.round(this.distance/12);
+      var r=5;
+      this.gradient=(this.y2-this.y6)/(this.x2-this.x6);
+      this.Aseats=[];
+      for(var i=0;i<this.seats;i++) {
+         if(this.x0<this.x2)
+           {
+             this.x3=this.x6+Math.sqrt(Math.pow(12,2)/(1+Math.pow(this.gradient,2)));
+          }
+          else{
+              this.x3=this.x6-Math.sqrt(Math.pow(12,2)/(1+Math.pow(this.gradient,2)));
+              }
+          this.y3=this.gradient*(this.x3-this.x6)+this.y6;
+          this.x4=(this.x6+this.x3)/2;
+          this.y4=(this.y6+this.y3)/2;
+          let c = {
+                  id:i,
+                 cx: this.x4,
+                 cy: this.y4
+                }
+
+          this.Aseats.push(c);
+
+          this.x6=this.x3;
+          this.y6=this.y3;
+                
+     }
+    console.log(this.Aseats);
+ 
+  
+}
+  }
+
+  appendToContainer(e) {
+    {
+      
+      if((this.count)%2==0)
+      {
+      this.classname="visible";
+         var x = e.clientX;
+        var y = e.clientY;
+        this.x0=x;
+        this.y0=y; 
+        this.x5=x;
+        this.y5=y;
+        // document.getElementById('svg').removeChild(cir1);
+      }
+      else{
+        this.classname="invisible";
+        var x1 = e.clientX;
+        var y1 = e.clientY;
+        var r=5;
+        this.distance=Math.sqrt(Math.pow((x1-this.x0),2)+Math.pow((y1-this.y0),2));
+        this.seats=Math.round(this.distance/12);
+        this.gradient=(y1-this.y0)/(x1-this.x0);
+        for(var i=0;i<this.seats;i++) {
+        if(this.x0<x1)
+        {
+          this.x3=this.x0+Math.sqrt(Math.pow(12,2)/(1+Math.pow(this.gradient,2)));
+        }
+        else{
+          this.x3=this.x0-Math.sqrt(Math.pow(12,2)/(1+Math.pow(this.gradient,2)));
+        }
+        this.y3=this.gradient*(this.x3-this.x0)+this.y0;
+        const cir1 = document .createElementNS("http://www.w3.org/2000/svg", "circle");
+        this.x4=(this.x0+this.x3)/2;
+        this.y4=(this.y0+this.y3)/2;
+        cir1.setAttribute("cx", this.x4); 
+        cir1.setAttribute("cy",this.y4);
+        cir1.setAttribute("r", '5');
+        cir1.setAttribute('fill',"red")
+        document .getElementById ('svg'). appendChild ( cir1 );
+        this.x0=this.x3;
+        this.y0=this.y3;
+      } 
+    }
+  }
+  this.count=this.count+1;
+}
+}
+
