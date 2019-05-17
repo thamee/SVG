@@ -1,0 +1,7 @@
+<svg  id="svg"  xmlns="http://www.w3.org/2000/svg" width="100%" height="500" (click)="appendToContainer($event)" (mousemove)="location($event)"style="background-color:pink">
+
+    <line [attr.x1]="x0" [attr.y1]="y0" [attr.x2]="x2" [attr.y2]="y2" style="stroke:rgb(255,0,0);stroke-width:2" [attr.class]="classname"/>
+    <circle *ngFor="let i of Aseats" [id]='i.id' r="5" [attr.cy]='i.cy' [attr.cx] = 'i.cx'></circle>
+    
+
+</svg>
