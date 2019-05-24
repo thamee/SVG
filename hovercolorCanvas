@@ -1,0 +1,90 @@
+
+    
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  positionx2: number;
+  positiony2: number;
+  
+ngOnInit()
+{
+  
+  
+
+var myCircle = {
+  x: 150,
+  y: 150,
+  radius: 25,
+  rr: 25 * 25, // radius squared
+  hovercolor: "red",
+  blurcolor: "green",
+  isHovering: false
+}
+this.drawCircle(myCircle);
+}
+
+
+
+
+
+ drawCircle(circle) {
+  var canvas = document.querySelector("canvas");
+  var ctx = canvas.getContext("2d");
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fillStyle = circle.isHovering ? circle.hovercolor : circle.blurcolor;
+        ctx.fill();
+    }
+ handleMouseMove(e) {
+   console.log(e);
+  
+  const canvas = document.querySelector('canvas');
+  var rect = canvas.getBoundingClientRect();
+  var canvasBounds = canvas.getBoundingClientRect();
+  var myCircle = {
+    x: 150,
+    y: 150,
+    radius: 25,
+    rr: 25 * 25, // radius squared
+    hovercolor: "red",
+    blurcolor: "green",
+    isHovering: false
+  }
+  this.positionx2=  (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+  this.positiony2= (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+    var dx = this.positionx2 - myCircle.x;
+    var dy = this.positiony2 - myCircle.y;
+
+    // math to test if mouse is inside circle
+    if (dx * dx + dy * dy < myCircle.rr) {
+
+        // change to hovercolor if previously outside
+        if (!myCircle.isHovering) {
+            myCircle.isHovering = true;
+            this.drawCircle(myCircle);
+        }
+        console.log("inside");
+
+    } else {
+      console.log(myCircle.isHovering);
+        // change to blurcolor if previously inside
+        
+            myCircle.isHovering = false;
+            this.drawCircle(myCircle);
+            
+        
+    }
+
+}
+
+
+
+}
+<h4>Hover over the circle to change its color</h4>
+<canvas id="canvas" width=300 height=300 (mousemove)="handleMouseMove($event)"></canvas>
