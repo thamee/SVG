@@ -1,0 +1,360 @@
+
+    
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  title = 'my-app';
+  cx:number;
+  cy:number;
+  x0:any; x2:any; y2:any; x3:any; y3:any;x4:any; y4:any; x5:any;y5:any; x6:any; y6:any; classname:string; y0:any;
+  count:number=0;
+  gradient:number;
+  r:number;
+  distance:any;
+ circles=[];
+ seats:number;
+ positionx:any;
+ fill:string;
+ positiony:any;
+ selectSingle:boolean=false;
+ deleteMultiple:boolean=false;
+ selectMultiple:boolean=false;
+ id:any=1;
+ value:any=1;
+ k:any=1;
+ positionx2: number;
+ positiony2: number;
+ Aseats = [];
+ removeSeats=[];
+currentPosition: { x: number, y: number } = {
+                  x: 0,
+                  y: 0  
+                  }
+  hovercol: string;
+ 
+  ngOnInit() {
+    
+    this.circles=[];
+    this.hovercol="blue";
+    var canvas=document.getElementById('canvas');
+    // this.previewSelection();
+  }
+  
+  selectSeat()
+  {
+    this.selectSingle=true;
+  }
+ 
+  selectMultipleSeat()
+  {
+    this.selectMultiple=true;
+  }
+  defineCircle()
+
+  {
+    var Circle = function(x, y, radius,id,fill,hovercolor,isHovering) {
+      this.x      = x;
+      this.y      = y;
+      this.radius = radius;
+      this.id=id;
+      this.fill=fill;
+      this.blurcolor=this.blurcolor,
+      this.hovercolor=hovercolor,
+      this.isHovering= false
+
+        }         
+  }
+  
+drawCircle(circle)
+{
+  const canvas = document.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.beginPath();
+  ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI, false);
+  ctx.fillStyle =circle.fill;circle.isHovering? circle.hovercolor : circle.blurcolor;
+  ctx.fill();
+}
+  selectseat(e)
+  {
+    
+        this.fill="red"
+        const canvas = document.querySelector('canvas');
+        this.defineCircle()   
+        this.circles.forEach(circle => {
+              var rect = canvas.getBoundingClientRect(); 
+              this.positionx=  (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+              this.positiony= (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+              var distance = Math.sqrt(Math.pow(this.positionx  - circle.x, 2) + Math.pow(this.positiony  - circle.y, 2));
+             // Test circle for hit
+              if (distance <= circle.radius){
+                    var index = this.circles.indexOf(circle);
+                    
+                    if(this.selectSingle==true)
+                    {
+                      if(circle.fill=="red")
+                      {
+                        this.select(circle);
+                        this.removeSeats.push(index);
+                      }
+                      else{
+                        var position=this.removeSeats.indexOf(index);
+                        this.select(circle);
+                        delete this.removeSeats[position];
+                      }
+                      
+                      this.selectSingle=false;
+                    }        
+              }
+              
+            });
+            
+              
+               
+  
+              
+            }
+          
+
+
+
+ fillseat(e)
+{
+
+  const canvas = document.querySelector('canvas');
+  var rect = canvas.getBoundingClientRect();
+  var canvasBounds = canvas.getBoundingClientRect();
+  this.positionx2=  (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+  this.positiony2= (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+  this.defineCircle();
+  this.circles.forEach(circle => {
+  
+
+      if((this.positionx<=circle.x && circle.x<=this.positionx2)||(this.positionx2<=circle.x && circle.x<=this.positionx))
+        {
+      if((this.positiony<=circle.y && circle.y<=this.positiony2)||(this.positiony2<=circle.y && circle.y<=this.positiony))
+      {
+        if(this.selectMultiple==true)
+        {
+          var index = this.circles.indexOf(circle);
+          if(circle.fill=="red")
+                {
+                
+                  this.removeSeats.push(index);
+                  
+                }
+          else{
+            var pointer = this.removeSeats.indexOf(index);
+            delete this.removeSeats[pointer];
+                    }         
+           this.select(circle);
+        
+        }
+     
+      }
+      }
+  
+                              });
+                              this.circles.splice(0,0);
+                              this.deleteMultiple=false;
+                              this.selectMultiple=false;
+                              this.refresh(); 
+}
+previewSelection()
+{
+  if(this.selectMultiple==true)
+  {
+
+  
+  onmousemove= (event: MouseEvent) => {
+    // console.log(event);
+   const canvas = document.querySelector('canvas');
+        this.defineCircle()   
+        this.circles.forEach(circle => {
+              var rect = canvas.getBoundingClientRect(); 
+              this.positionx=  (event.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+              this.positiony= (event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+              var distance = Math.sqrt(Math.pow(this.positionx  - circle.x, 2) + Math.pow(this.positiony  - circle.y, 2));
+             // Test circle for hit
+              if (distance <= circle.radius){
+                
+                if (!circle.isHovering) {
+                  
+                  circle.isHovering = true;
+                  // this.drawCircle(circle);
+                  console.log(circle.hovercolor);
+              }
+
+                      
+         } 
+        else{
+          if (circle.isHovering) {
+            // circle.isHovering = false;
+            // this.drawCircle(circle);
+        }
+        }
+      });
+ 
+            }  
+  }  }          
+
+deleteMultipleSeat()
+{
+  this.removeSeats.forEach(index =>{
+    delete this.circles[index];
+  });
+  this.circles.splice(0,0);
+  this.refresh(); 
+  this.removeSeats=[];
+}
+                  
+    location(e){
+  
+        this.classname="invisible";
+        this.x6=this.x5;
+        this.y6=this.y5;
+        var x = e.clientX;
+        var y = e.clientY;
+        this.x2=x;
+        this.y2=y;
+        if((this.count)%2!=0)
+           {
+              this.distance=Math.sqrt(Math.pow((this.x2-this.x6),2)+Math.pow((this.y2-this.y6),2));
+              this.seats=Math.round(this.distance/16);
+              var r=7;
+              this.gradient=(this.y2-this.y6)/(this.x2-this.x6);
+              this.Aseats=[];
+             for(var i=0;i<this.seats;i++) {
+                                          if(this.x0<this.x2)
+                                            {
+                                              this.x3=this.x6+Math.sqrt(Math.pow(16,2)/(1+Math.pow(this.gradient,2)));
+                                            }
+                                            else{
+                                                this.x3=this.x6-Math.sqrt(Math.pow(16,2)/(1+Math.pow(this.gradient,2)));
+                                                }
+                                            this.y3=this.gradient*(this.x3-this.x6)+this.y6;
+                                            this.x4=(this.x6+this.x3)/2;
+                                            this.y4=(this.y6+this.y3)/2;
+                                            let c = {
+                                                    id:i,
+                                                  cx: this.x4,
+                                                  cy: this.y4
+                                                  }
+
+                                            this.Aseats.push(c);
+
+                                            this.x6=this.x3;
+                                            this.y6=this.y3;
+                
+                                          }
+   
+ 
+  
+            }
+            }
+
+refresh(){
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.circles.forEach(circle => {
+        this.drawCircle(circle); });
+  
+          }
+
+ select(cir){
+   console.log(this.removeSeats)
+            const canvas = document.querySelector('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            this.circles.forEach(circle => {
+                const canvas = document.querySelector('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.beginPath();
+                ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI, false);
+                if(circle.id===cir.id)
+                {
+                  if(circle.fill=="red")
+                  {
+                    circle.fill = 'blue';
+                    
+                  }
+                  else{
+                    circle.fill = 'red'; 
+                    
+                  }
+                  
+                }
+                
+                  ctx.fillStyle = circle.fill;
+                
+                
+                ctx.fill();
+    
+                                             });
+                                             this.removeSeats.splice(0,0); 
+                                             console.log(this.removeSeats)                            
+              }
+              
+  appendToContainer(e) {
+    {
+      if((this.count)%2==0)
+      {
+          this.classname="visible";
+            var x = e.clientX;
+            var y = e.clientY;
+            this.x0=x;
+            this.y0=y; 
+            this.x5=x;
+            this.y5=y;
+      }
+      else{
+            this.classname="invisible";
+            this.fill="red"
+            var x1 = e.clientX;
+            var y1 = e.clientY;
+            var r=7;
+            this.distance=Math.sqrt(Math.pow((x1-this.x0),2)+Math.pow((y1-this.y0),2));
+            this.seats=Math.round(this.distance/16);
+            this.gradient=(y1-this.y0)/(x1-this.x0);
+            for(var i=0;i<this.seats;i++) {
+            if(this.x0<x1)
+            {
+              this.x3=this.x0+Math.sqrt(Math.pow(16,2)/(1+Math.pow(this.gradient,2)));
+            }
+            else
+            {
+              this.x3=this.x0-Math.sqrt(Math.pow(16,2)/(1+Math.pow(this.gradient,2)));
+                }
+            this.y3=this.gradient*(this.x3-this.x0)+this.y0;
+            const cir1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            this.x4=(this.x0+this.x3)/2;
+            this.y4=(this.y0+this.y3)/2;
+            cir1.setAttribute("cx", this.x4); 
+            cir1.setAttribute("cy",this.y4);
+            cir1.setAttribute("r", '7');
+            cir1.setAttribute('id',this.value)
+            document .getElementById ('svg'). appendChild ( cir1 );
+            var Circle = function(x, y, radius,id,fillStyle) {
+                this.x      = x;
+                this.y      = y;
+                this.radius = radius;
+                this.id=id;
+                this.fill=fillStyle;                                                   }
+            var circle    = new Circle(this.x4, this.y4, 7,this.value,this.fill);
+            this.value++;
+            this.x0=this.x3;
+            this.y0=this.y3;
+            this.circles.push(circle); 
+                                     } 
+          this.refresh(); 
+       } 
+   
+      }
+  this.count=this.count+1;
+}
+}
