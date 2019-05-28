@@ -1,0 +1,90 @@
+
+    
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  title = 'my-app';
+  count:number=1;
+  points=[];
+  x0:any;
+  y0:any;
+  x1:any;
+  y1:any;
+  Dcm:any;
+  draw:boolean=false;
+  scale;
+  distance:any;
+  ActualLength:any;
+  ngOnInit() {
+    this.Dcm=0.0264583333;
+   
+  }
+  drawline(e)
+  {
+    console.log(this.scale);
+      if(this.count%2 != 0)
+      {
+            this.points=[];
+            this.points.push(e.clientX);
+            this.points.push(e.clientY);
+            this.draw=true;
+            console.log(this.count);
+      }
+      else{
+        this.draw=false;
+        console.log(this.count);
+            this.points.push(e.clientX);
+            this.points.push(e.clientY);
+            this.x0=this.points[0];
+            this.y0=this.points[1];
+            this.x1=this.points[2];
+            this.y1=this.points[3];
+            const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line1.setAttribute("x1", this.x0); 
+            line1.setAttribute("y1",this.y0);
+            line1.setAttribute("x2", this.x1);
+            line1.setAttribute('y2',this.y1)
+            document .getElementById ('svg'). appendChild ( line1 );
+            this.distance=Math.sqrt(Math.pow((this.x0-this.x1),2)+Math.pow((this.y0-this.y1),2));
+            this.ActualLength=this.distance*this.Dcm*this.scale;
+            this.points=[];
+           
+      }
+          this.count++;
+          
+  }
+
+  drawBlock(e)
+  {
+    this.x0=e.clientX;
+    this.y0=e.clientY;
+
+
+  }
+  preview(e)
+  {
+      if(this.draw==true)
+      {
+        this.x1=e.clientX;
+        this.y1=e.clientY;
+      }
+  }
+ 
+}
+
+
+
+
+##########################################################################################
+  
+  <svg  id="svg"  xmlns="http://www.w3.org/2000/svg" width="100%" height="500" (click)="drawline($event)"style="background-color:pink">
+    <line [attr.x1]="x0" [attr.y1]="y0" [attr.x2]="x1" [attr.y2]="y1" style="stroke:rgb(255,0,0);stroke-width:2" [attr.class]="classname"/>
+    </svg>
+    <label>scaling in km for 1cm</label>
+    <input type="text" [(ngModel)]="scale">
+    <p>{{ActualLength}}</p>
