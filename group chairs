@@ -1,0 +1,572 @@
+
+    
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  title = 'my-app';
+  cx:number;
+  cy:number;
+  x0:any; x2:any; y2:any; x3:any; y3:any;x4:any; y4:any; x5:any;y5:any; x6:any; y6:any; classname:string; y0:any;
+  count:number=0;
+  gradient:number;
+  r:number;
+  distance:any;
+ circles=[];
+ seats:number;
+ positionx:any;
+ fill:string;
+ positiony:any;
+ selectSingle:boolean=false;
+ deleteMultiple:boolean=false;
+ selectMultiple:boolean=false;
+ id:any=1;
+ value:any=1;
+ k:any=1;
+ positionx2: number;
+ positiony2: number;
+ Aseats = [];
+ preview:boolean=false;
+ removeSeats=[];
+ rectangles=[];
+ pos:any;
+currentPosition: { x: number, y: number } = {
+                  x: 0,
+                  y: 0  
+                  }
+  hovercol: string;
+  positionMove: number;
+  positionMovey: number;
+  nodes: any[];
+  width: number;
+  height: number;
+  numnodes: number;
+  angle: number;
+  x: number;
+  y: number;
+  rad: any;
+  centerx: any;
+  centery: any;
+  radius: any;
+  wid: any;
+  height1:any;
+  x7:any;
+  y7:any;
+  target:any;
+  draw:boolean=false;
+  rectId: any=0;
+  x8: any;
+  y8: any;
+  curveSeats=[];
+  arc=[];
+  className: any;
+  group: any;
+ 
+  ngOnInit() {
+    
+    this.circles=[];
+    this.hovercol="blue";
+  
+    // this.previewSelection();
+    if(this.draw==false)
+    {
+    document.addEventListener('mousedown', (e: MouseEvent) => {
+     
+      
+      this.target = e.target as HTMLElement;
+     
+      if (this.target.tagName ==='rect') {
+          this.target = e.target;
+          const rect1=document.getElementById(this.target.id);
+          this.rectangles.forEach(rectangle => {
+            if(rectangle===rect1)
+            {
+              this.arc=[];
+              this.curveSeats=[];
+              rectangle.setAttribute("stroke","red");
+              this.radius  =( Math.sqrt(Math.pow(parseFloat(rectangle.getAttribute('x'))  - parseFloat(rectangle.getAttribute('x2')), 2) + Math.pow(parseFloat(rectangle.getAttribute('y')) - parseFloat(rectangle.getAttribute('y2')), 2)))/2;
+              this.centerx=(parseFloat(rectangle.getAttribute('x'))+parseFloat(rectangle.getAttribute('x2')))/2 ;
+              this.centery= (parseFloat(rectangle.getAttribute('y'))+parseFloat(rectangle.getAttribute('y2')))/2;
+              this.arc.push({'radius':this.radius, 'rad':7,'centerX':this.centerx,'centery':this.centery});
+              this.circles.forEach(circle => {
+                // console.log(circle);
+
+                if(circle.group===rectangle.id)
+                {
+                  this.curveSeats.push(circle);
+                }
+                // if((rect1.getAttribute('x')<=circle.x && circle.x<=rect1.getAttribute('x2')||(rect1.getAttribute('x2')<=circle.x && circle.x<=rect1.getAttribute('x'))))
+                //       {
+                //         if((rect1.getAttribute('y')<=circle.y && circle.y<=rect1.getAttribute('y2')||(rect1.getAttribute('y2')<=circle.y && circle.y<=rect1.getAttribute('y'))))
+                //         {
+                //             this.curveSeats.push(circle);
+                //         }
+                //   }
+    
+                });
+            }
+            else{
+              rectangle.setAttribute("stroke","none");
+            }
+          });
+      }
+      
+  });
+  
+}
+
+    
+
+  }
+  
+  selectSeat()
+  {
+    this.selectSingle=true;
+  }
+  drawSeats()
+  {
+this.draw=true;
+  }
+  
+  selectSeats()
+  {
+    this.draw=false;
+  }
+curveseats()
+{
+  console.log(this.curveSeats);
+  this.arc.forEach(arc => {
+
+  this.curve(arc.radius,arc.rad,arc.centerX,arc.centery)
+// console.log(this.curveSeats);
+  });
+  this.curveSeats=[];
+  this.arc=[];
+}
+  selectMultipleSeat()
+  {
+    this.selectMultiple=true;
+  }
+  
+  defineCircle()
+
+  {
+    var Circle = function(x, y, radius,id,fill,hovercolor,group) {
+      this.x      = x;
+      this.y      = y;
+      this.radius = radius;
+      this.id=id;
+      this.fill=fill;
+      this.blurcolor=this.blurcolor,
+      this.hovercolor=hovercolor,
+      this.isHovering= false
+      this.group=group;
+
+        }         
+  }
+  defineRect()
+
+  {
+    var rect = function(x, y, width,id,fill,stroke,height) {
+      this.x      = x;
+      this.y      = y;
+      this.width = width;
+      this.id=id;
+      this.fill=fill;
+      this.height=height,
+      this.stroke= false
+
+        }         
+  }
+  curve(radius,rad,centerx,centery)
+    {
+      // console.log(this.curveSeats);
+   this.nodes=[];
+   var i=0;
+   var arcradius = 50;
+   var n = (Math.PI * 2 * arcradius) / (2 * radius);
+             this.rad=7;
+             this.curveSeats.forEach(seats => {
+              this.angle = (i / this.curveSeats.length) *Math.PI; // Calculate the angle at which the element will be placed.
+                                                    // For a semicircle, we would use (i / numNodes) * Math.PI.
+              this.x = (radius * Math.cos(this.angle)) +centerx; // Calculate the x position of the element.
+              this.y = (radius * Math.sin(this.angle)) +centery; // Calculate the y position of the element.
+              this.nodes.push({'id':seats.id, 'x': this.x, 'y':this.y});
+              i++;
+             }
+            );
+            //  (x + r*cos(a), y + r*sin(a))
+            this.nodes.forEach(node => {
+             const cir1 = document.getElementById(node.id);
+             cir1.setAttribute("cx",node.x); 
+             cir1.setAttribute("cy",node.y);
+             cir1.setAttribute("r",rad );
+             
+             document .getElementById ('svg'). appendChild ( cir1 );
+              });
+            
+    }
+  
+drawCircle(circle)
+{
+  const canvas = document.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.beginPath();
+  ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI, false);
+  ctx.fillStyle =circle.fill;circle.isHovering? circle.hovercolor : circle.blurcolor;
+  ctx.fill();
+}
+  selectseat(e)
+  {
+    // console.log(this.removeSeats);
+    this.preview=true;
+    
+        this.fill="red"
+        const canvas = document.querySelector('canvas');
+        this.defineCircle()   
+        this.circles.forEach(circle => {
+              var rect = canvas.getBoundingClientRect(); 
+              this.positionx=  (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+              this.positiony= (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+              var distance = Math.sqrt(Math.pow(this.positionx  - circle.x, 2) + Math.pow(this.positiony  - circle.y, 2));
+             // Test circle for hit
+            
+              if (distance <= circle.radius){
+                    var index = this.circles.indexOf(circle);
+                    
+                    if(this.selectSingle==true)
+                    {
+                      if(circle.fill=="green")
+                      {
+                        this.select(circle);
+                        this.removeSeats.push(index);
+                      }
+                      else{
+                        var position=this.removeSeats.indexOf(index);
+                        this.select(circle);
+                        delete this.removeSeats[position];
+                      }
+                      
+                      this.selectSingle=false;
+                    }        
+              }
+              
+            });
+            
+              
+               
+  
+              
+            }
+          
+
+
+
+ fillseat(e)
+{
+
+  // const canvas = document.querySelector('canvas');
+  // var rect = canvas.getBoundingClientRect();
+  // var canvasBounds = canvas.getBoundingClientRect();
+  // this.positionx2=  (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+  // this.positiony2= (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+  // this.defineCircle();
+  // this.circles.forEach(circle => {
+  
+
+  //     if((this.positionx<=circle.x && circle.x<=this.positionx2)||(this.positionx2<=circle.x && circle.x<=this.positionx))
+  //       {
+  //     if((this.positiony<=circle.y && circle.y<=this.positiony2)||(this.positiony2<=circle.y && circle.y<=this.positiony))
+  //     {
+  //       if(this.selectMultiple==true)
+  //       {
+  //         var index = this.circles.indexOf(circle);
+  //         if(circle.fill=="red")
+  //               {
+                
+  //                 this.removeSeats.push(index);
+                  
+  //               }
+  //         else{
+  //           var pointer = this.removeSeats.indexOf(index);
+  //           delete this.removeSeats[pointer];
+  //                   }         
+  //          this.select(circle);
+        
+  //       }
+     
+  //     }
+  //     }
+  
+  //                             });
+  //                             this.circles.splice(0,0);
+                              this.deleteMultiple=false;
+                              this.selectMultiple=false;
+                              this.preview=false;
+                              // this.refresh(); 
+}
+previewSelection(e)
+{
+  const canvas = document.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  // this.defineCircle()   
+  this.circles.forEach(circle => {
+    //  circle = new Path2D();
+        var rect = canvas.getBoundingClientRect(); 
+        this.positionMove=  (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width;
+        this.positionMovey= (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height;
+        var distance = Math.sqrt(Math.pow(this.positionMove  - circle.x, 2) + Math.pow(this.positionMovey  - circle.y, 2));
+        if(this.selectMultiple==true && this.preview==true){
+        if (distance <= circle.radius){
+          if(circle.fill=="red" || circle.fill=="green")
+          {
+            var index = this.circles.indexOf(circle);
+            this.removeSeats.push(index);
+          }
+          circle.fill="blue";
+          this.drawCircle(circle);
+        
+        }
+      }
+      else{
+
+ if(circle.fill!="blue")
+    {
+  if (distance <= circle.radius){
+          circle.fill="green";
+          this.drawCircle(circle);
+        }
+        else{
+            circle.isHovering=false;
+            circle.fill="red";
+            this.drawCircle(circle);
+        }
+      }
+    }
+     
+           
+      });
+      // console.log(this.removeSeats);
+  
+      
+}          
+deleteMultipleSeat()
+{
+ 
+  this.removeSeats.forEach(index =>{
+    delete this.circles[index];
+  });
+  this.circles.splice(0,0);
+  this.refresh(); 
+  this.removeSeats=[];
+}
+                  
+    location(e){
+  
+        this.classname="invisible";
+        this.x6=this.x5;
+        this.y6=this.y5;
+        var x = e.clientX;
+        var y = e.clientY;
+        this.x2=x;
+        this.y2=y;
+        if((this.count)%2!=0)
+           {
+              this.distance=Math.sqrt(Math.pow((this.x2-this.x6),2)+Math.pow((this.y2-this.y6),2));
+              this.seats=Math.round(this.distance/16);
+              var r=7;
+              this.gradient=(this.y2-this.y6)/(this.x2-this.x6);
+              this.Aseats=[];
+             for(var i=0;i<this.seats;i++) {
+                                          if(this.x0<this.x2)
+                                            {
+                                              this.x3=this.x6+Math.sqrt(Math.pow(16,2)/(1+Math.pow(this.gradient,2)));
+                                            }
+                                            else{
+                                                this.x3=this.x6-Math.sqrt(Math.pow(16,2)/(1+Math.pow(this.gradient,2)));
+                                                }
+                                            this.y3=this.gradient*(this.x3-this.x6)+this.y6;
+                                            this.x4=(this.x6+this.x3)/2;
+                                            this.y4=(this.y6+this.y3)/2;
+                                            let c = {
+                                                    id:i,
+                                                  cx: this.x4,
+                                                  cy: this.y4
+                                                  }
+
+                                            this.Aseats.push(c);
+
+                                            this.x6=this.x3;
+                                            this.y6=this.y3;
+                
+                                          }
+   
+ 
+  
+            }
+            }
+
+refresh(){
+        const canvas = document.querySelector('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.circles.forEach(circle => {
+        this.drawCircle(circle); });
+          }
+
+ select(cir){
+  //  console.log(this.removeSeats)
+            const canvas = document.querySelector('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            this.circles.forEach(circle => {
+                const canvas = document.querySelector('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.beginPath();
+                ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI, false);
+                if(circle.id===cir.id)
+                {
+                  if(this.selectSingle==true)
+                  {
+                    if(circle.fill=="green")
+                  {
+                    circle.fill = 'blue';
+                    
+                  }
+                  else{
+                    circle.fill = 'red'; 
+                    
+                  }
+                  }
+                  
+                  
+                  
+                }
+                
+                  ctx.fillStyle = circle.fill;
+                
+                
+                ctx.fill();
+    
+                                             });
+                                             this.removeSeats.splice(0,0); 
+                                            //  console.log(this.removeSeats)                            
+              }
+    
+              
+  appendToContainer(e) {
+    if(this.draw==true)
+    {
+
+    
+    {
+      if((this.count)%2==0)
+      {
+          this.classname="visible";
+            var x = e.clientX;
+            var y = e.clientY;
+            this.x0=x;
+            this.y0=y; 
+            this.x5=x;
+            this.y5=y;
+      }
+      else{
+        this.rectId++;
+            this.classname="invisible";
+            this.fill="red"
+            var x1 = e.clientX;
+            var y1 = e.clientY;
+            if(this.x5<=x1)
+            {
+              this.wid=x1-this.x5;
+              this.x7=this.x5;
+              this.x8=x1;
+            }
+            else{
+              this.wid=this.x5-x1;
+              this.x7=x1;
+              this.x8=this.x5;
+            }
+            if(this.y5<=y1)
+            {
+              this.height1=y1-this.y5;
+              this.y7=this.y5;
+              this.y8=y1;
+            }
+            else{
+              this.height1=this.y5-y1;
+              this.y7=y1
+              this.y8=this.y5;
+            }
+            this.centerx=(Math.abs(x1+this.x5))/2;
+            this.centery=(Math.abs(y1+this.y5))/2;
+            var r=7;
+            this.distance=Math.sqrt(Math.pow((x1-this.x0),2)+Math.pow((y1-this.y0),2));
+            this.seats=Math.round(this.distance/16);
+            this.gradient=(y1-this.y0)/(x1-this.x0);
+           
+            for(var i=0;i<this.seats;i++) {
+            if(this.x0<x1)
+            {
+              this.x3=this.x0+Math.sqrt(Math.pow(16,2)/(1+Math.pow(this.gradient,2)));
+             
+            }
+            else
+            {
+              this.x3=this.x0-Math.sqrt(Math.pow(16,2)/(1+Math.pow(this.gradient,2)));
+            
+                }
+            this.y3=this.gradient*(this.x3-this.x0)+this.y0;
+            const cir1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            this.x4=(this.x0+this.x3)/2;
+            this.y4=(this.y0+this.y3)/2;
+            cir1.setAttribute("cx", this.x4); 
+            cir1.setAttribute("cy",this.y4);
+            cir1.setAttribute("r", '7');
+            cir1.setAttribute('id',this.value)
+            cir1.setAttribute('group',this.rectId+"R");
+            this.group=this.rectId+"R"
+            document .getElementById ('svg'). appendChild ( cir1 );
+            var Circle = function(x, y, radius,id,fillStyle,group) {
+                this.x      = x;
+                this.y      = y;
+                this.radius = radius;
+                this.group=group;
+                this.id=id;
+                this.fill=fillStyle;                                                   }
+            var circle    = new Circle(this.x4, this.y4, 7,this.value,this.fill,this.group);
+            this.value++;
+            this.x0=this.x3;
+            this.y0=this.y3;
+            this.circles.push(circle); 
+                                     } 
+                                      const rect1=document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect1.setAttribute("x",this.x7);
+            rect1.setAttribute("y",this.y7);
+            rect1.setAttribute("width",this.wid);
+            rect1.setAttribute("height",this.height1);
+            rect1.setAttribute("x2",this.x8);
+            rect1.setAttribute("y2",this.y8);
+            // rect1.setAttribute("stroke","red");
+            rect1.setAttribute("fill","transparent");
+            rect1.setAttribute("id",this.rectId+"R");
+            this.rectangles.push(rect1);
+            document .getElementById ('svg'). appendChild ( rect1 );
+          this.refresh(); 
+       } 
+       
+   
+      }
+   this.radius=this.distance/2;
+  this.count=this.count+1;
+
+  
+}
+
+  }
+
+}
