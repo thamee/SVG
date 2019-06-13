@@ -1,0 +1,141 @@
+
+    
+import { Component, OnInit } from '@angular/core';
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  title = 'my-app';
+  cx:number;
+  cy:number;
+  x0:any; x2:any; y2:any; x3:any; y3:any;x4:any; y4:any; x5:any;y5:any; x6:any; y6:any; classname:string; y0:any;
+  count:number=0;
+  gradient:number;
+  r:number;
+  distance:any;
+ circles=[];
+ seats:number;
+ positionx:any;
+ fill:string;
+ positiony:any;
+ selectSingle:boolean=false;
+ deleteMultiple:boolean=false;
+ selectMultiple:boolean=false;
+ id:any=1;
+ value:any=1;
+ k:any=1;
+ positionx2: any;
+ positiony2: any;
+ Aseats = [];
+ preview:boolean=false;
+ removeSeats=[];
+currentPosition: { x: number, y: number } = {
+                  x: 0,
+                  y: 0  
+                  }
+  hovercol: string;
+  positionMove: any;
+  positionMovey: any;
+  height: any;
+  wid: any;
+  startX: number;
+  startY: number;
+  offsetX: number;
+  offsetY: number;
+  scrollX: number;
+  scrollY: number;
+  mouseX: number;
+  mouseY: number;
+  ismouseDown:boolean=false;
+ 
+  ngOnInit() {
+    
+    var canvas = document.querySelector("canvas");
+    var ctx = canvas.getContext("2d");
+    
+    // style the context
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 3;
+    
+   
+  }
+    
+  handleMouseDown(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var canvas = document.querySelector("canvas");
+        var rect = canvas.getBoundingClientRect(); 
+        this.startX=  (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width;
+        this.startY= (e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height;
+        this.ismouseDown=true;
+        console.log(this.startY);
+        // save the starting x/y of the rectangle
+        
+    
+        // set a flag indicating the drag has begun
+       
+    }
+    
+  handleMouseUp(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.ismouseDown=false;
+        // the drag is over, clear the dragging flag
+       
+    }
+    
+  handleMouseOut(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    
+        // the drag is over, clear the dragging flag
+        
+    }
+    
+  handleMouseMove(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    
+        // if we're not dragging, just return
+        
+        if(!this.ismouseDown){return;}
+        // get the current mouse position
+        var canvas = document.querySelector("canvas");
+        var rect = canvas.getBoundingClientRect(); 
+        this.mouseX =(e.clientX - rect.left) / (rect.right - rect.left) * canvas.width;
+        this.mouseY =(e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height;
+    
+        // Put your mousemove stuff here
+        var canvas = document.querySelector("canvas");
+        var ctx = canvas.getContext("2d");
+        
+        // clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+        // calculate the rectangle width/height based
+        // on starting vs current mouse position
+        var width = this.mouseX - this.startX;
+        var height = this.mouseY - this.startY;
+        console.log(this.mouseY);
+
+        // draw a new rect from the start position 
+        // to the current mouse position
+        ctx.strokeRect(this.startX, this.startY, width, height);
+    
+    }
+    
+    // listen for mouse events
+    
+}
+/////////////////////////
+
+  
+ 
+  
+<button mat-button (click)="selectSeat()" style="background: rgb(9, 97, 97)">SelectSingleSeat</button>
+<button mat-button (click)="selectMultipleSeat()" style="background:antiquewhite">SelectSMultipleSeat</button>
+<button mat-button (click)="deleteMultipleSeat()" style="color:red" >Delete</button>
+<canvas  id="canvas" width="1000" height="625" style="display: block; width: 714px; height: 625.818px; touch-action: auto; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color:rgb(197, 204, 204)"   (mousemove)="handleMouseMove($event)" (mousedown)="handleMouseDown($event)"  (mouseup)="handleMouseUp($event)" style="background: rgb(197, 204, 204)" ></canvas> 
+//////////////////
