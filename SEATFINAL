@@ -1,0 +1,33 @@
+<
+<svg  id="svg"  xmlns="http://www.w3.org/2000/svg" width="100%" height="500" (click)="onclick($event)" (mousemove)="mouseMove($event)"style="background: aquamarine" (mouseup)="endDrag($event)" (mousedown)="startDrag($event)">
+  <g id="group" [attr.transform]="scale">
+  <circle *ngFor="let i of Aseats" id="R" r="7" [attr.cy]='i.cy' [attr.cx] = 'i.cx' fill="none" style="stroke: blue"></circle>  
+  <rect id="zoom_area" [attr.x]="startX2" [attr.y]="startY2" [attr.width]="width" [attr.height]="height"/>
+  <rect id="selecttext" [attr.x1]="initialx" [attr.y1]="initialy" [attr.width]="width1" [attr.height]="height2"/>
+    <circle id="circleZoom" [attr.cx]="cx1" [attr.cy]="cy1" [attr.r]="radius"/>
+    <polygon id="customZoom" [attr.points]= "points" style="fill:none;stroke:purple;stroke-width:1" />
+   
+    </g>
+</svg>
+
+
+
+
+<button (click)="select()">Selectseats</button>
+<button (click)="selectCir()">selectByCircle</button>
+<button (click)="polygon()">selectByCustomShapes</button>
+<button (click)="draw()">drawSeats</button>
+<button (click)="drag()">Drag seats</button>
+<div style="box-align: right">
+<button (click)="text()">add text</button>
+<button (click)="bold()">Bold</button>
+<button (click)="Italic()">T</button>
+<input (keyup)="onKey($event)" [(ngModel)]="caption">
+<input (keyup)="font()" [(ngModel)]="size">
+<input (change)="color()" id="color2" type="color"> 
+<button (click)="zoomPlus()">+</button>
+<button (mousemove)="rotate()">Rotate</button>
+
+<!-- <button (mousemove)="moveText()">MoveText</button> -->
+
+
