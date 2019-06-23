@@ -1,0 +1,602 @@
+import { Component, OnInit } from '@angular/core';
+import * as _ from 'lodash'
+import { svg } from 'd3';
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  title = 'my-app';
+  cx: number;
+  cy: number;
+  x0: any; x2: any; y2: any; x3: any; y3: any; x4: any; y4: any; x5: any; y5: any; x6: any; y6: any; classname: string; y0: any;
+  count: number = 0;
+  gradient: number;
+  r: number;
+  distance: any;
+  circles = [];
+  seats: number;
+  positionx: any;
+  fill: string;
+  positiony: any;
+  selectSingle: boolean = false;
+  deleteMultiple: boolean = false;
+  selectMultiple: boolean = false;
+  id: any = 1;
+  value: any = 1;
+  k: any = 1;
+  positionx2: number;
+  positiony2: number;
+  Aseats = [];
+  preview: boolean = false;
+  removeSeats = [];
+  currentPosition: { x: number, y: number } = {
+    x: 0,
+    y: 0
+  }
+  hovercol: string;
+  positionMove: number;
+  positionMovey: number;
+  ismouseDown: boolean = false;
+  startX: any;
+  startY: any;
+  mouseX: any;
+  mouseY: any;
+  startX2: any;
+  startY2: any;
+  endx2: any;
+  endy2: any;
+  height: number;
+  width: number;
+  stroke: string;
+  fill3: string;
+  drawSeat: boolean = false;
+  dragElements: boolean = false;
+  elements = [];
+  currentX: any;
+  currentY: any;
+  dx: any;
+  dy: any;
+  dargArray = [];
+  selectCircle: boolean = false;
+  radius: number;
+  cx1: number;
+  cy1: number;
+  distancecir: number;
+  drawCustom: boolean = false;
+  points = "";
+  position2 = "";
+  points3 = "";
+  polygonM = [];
+  polygonC = [];
+  length: any;
+  textid: any = 1;
+  letters: boolean = false;
+  textNode: SVGGraphicsElement;
+  textNode2: SVGGraphicsElement
+  caption;
+  size: string;
+  color2: any;
+  centerx: any;
+  centery: any;
+  transform: string;
+  degree: any = 0;
+  rotateText: boolean;
+  moveTExt: boolean;
+  scale: string;
+  scaledeg: number = 1;
+  transX: number = 0;
+  transy: number = 0;
+  startPOS: any;
+  startPOSX: any;
+  startPOSY: any;
+  dragSVG: boolean = false;
+  distX: number;
+  disty: number;
+  t1: any;
+  seat: HTMLElement;
+  selectObject: any;
+  allocate: boolean;
+  selectedElement: any;
+  endX: any;
+  endY: any;
+  manupulatePoints = [];
+  manupulateID: any;
+  selectedClass: any;
+  selectedManupulate: any;
+  ManupulateClass: any;
+  ngOnInit() {
+
+    this.circles = [];
+    // let mapWidth = parseFloat( d3.select('#map').style('width') );
+    // let mapHeight = parseFloat( d3.select('#map').style('height') );
+    // let factor = mapWidth / parseFloat(d3.select('#map svg').attr('viewBox').split(' ')[2]);
+
+    // let minimapRect = minimap.append('rect')
+    //   .attr('id', 'minimapRect')
+    //   .attr('width', mapWidth / factor )
+    //   .attr('height', mapHeight / factor )
+  }
+  mouseMove(e) {
+    //draw seats
+    if (this.drawSeat == true) {
+      this.classname = "invisible";
+      this.x6 = this.x5;
+      this.y6 = this.y5;
+      var x = e.clientX;
+      var y = e.clientY;
+      this.x2 = x;
+      this.y2 = y;
+      if ((this.count) % 2 != 0) {
+        this.distance = Math.sqrt(Math.pow((this.x2 - this.x6), 2) + Math.pow((this.y2 - this.y6), 2));
+        this.seats = Math.round(this.distance / 16);
+        var r = 7;
+        this.gradient = (this.y2 - this.y6) / (this.x2 - this.x6);
+        this.Aseats = [];
+        for (var i = 0; i < this.seats; i++) {
+          if (this.x0 < this.x2) {
+            this.x3 = this.x6 + Math.sqrt(Math.pow(16, 2) / (1 + Math.pow(this.gradient, 2)));
+          }
+          else {
+            this.x3 = this.x6 - Math.sqrt(Math.pow(16, 2) / (1 + Math.pow(this.gradient, 2)));
+          }
+          this.y3 = this.gradient * (this.x3 - this.x6) + this.y6;
+          this.x4 = (this.x6 + this.x3) / 2;
+          this.y4 = (this.y6 + this.y3) / 2;
+          let c = {
+            id: i,
+            cx: this.x4,
+            cy: this.y4
+          }
+
+          this.Aseats.push(c);
+
+          this.x6 = this.x3;
+          this.y6 = this.y3;
+
+        }
+
+
+
+      }
+    }
+
+
+
+
+    e.preventDefault();
+    e.stopPropagation();
+    x = e.clientX;
+    this.mouseY = e.clientY;
+
+    //drag and drop of selected  seats
+    if (this.dragElements == true && this.ismouseDown == true) {
+
+      this.elements.forEach(cir => {
+        var cir1 = document.getElementById(cir.id);
+        this.dx = cir.x + e.clientX - this.currentX;
+        this.dy = cir.y + e.clientY - this.currentY;
+        cir1.setAttribute("cx", this.dx);
+        cir1.setAttribute("cy", this.dy);
+        this.dargArray.push({ 'circle': cir, 'dx': this.dx, 'dy': this.dy });
+
+
+
+      });
+
+    }
+    //select the seats by drawing rectangle
+
+    if (this.allocate == true && this.selectedElement == "svg" && this.ismouseDown == true ) {
+      this.polygonM = [];
+      console.log("drawrec");
+      this.startX2 = Math.min(this.startX, e.clientX);
+      this.startY2 = Math.min(this.startY, e.clientY);
+      this.width = Math.abs(e.clientX - this.startX);
+      this.height = Math.abs(e.clientY - this.startY);
+      this.circles.forEach(circle => {
+        if ((circle.x >= this.startX2 && circle.x <= (this.startX2 + this.width)) && (circle.y >= this.startY2 && circle.y <= (this.startY2 + this.height))) {
+
+          var cir1 = document.getElementById(circle.id);
+          cir1.setAttribute('fill', 'red');
+
+        }
+
+        else {
+          var cir1 = document.getElementById(circle.id);
+
+          cir1.setAttribute('fill', 'blue');
+        }
+
+      });
+    }
+    else if (this.ismouseDown == true && this.ManupulateClass=="manupulate") {
+      this.manupulatePoints.forEach(element => {
+        if (this.selectedManupulate == element.id) {
+          this.polygonM[element.id] = [e.clientX, e.clientY];
+          // var cir=element.getElementById(this.selectedManupulate);
+          element.setAttribute('cx', e.clientX);
+          element.setAttribute('cy', e.clientY);
+
+        }
+        this.points = "";
+        this.polygonM.forEach(points => {
+          this.points = this.points + points[0] + "," + points[1] + " ";
+
+        });
+
+      });
+      console.log("points are" + "" + this.polygonM);
+      this.circles.forEach(cir => {
+        this.polygonC = [];
+        this.polygonC.push({ 'x': cir.x, 'y': cir.y });
+        if ((this.isPointInPoly(this.polygonM, { 'x': cir.x, 'y': cir.y })) == true) {
+          var cir1 = document.getElementById(cir.id);
+
+          cir1.setAttribute('fill', 'red');
+          this.elements.push(cir);
+        }
+        else {
+          var cir1 = document.getElementById(cir.id);
+
+          cir1.setAttribute('fill', 'blue');
+        }
+      });
+    }
+
+    //selecr rows by drawing circle
+    if (this.ismouseDown == true && this.selectCircle == true) {
+      this.cx1 = Math.min(this.startX, e.clientX);
+      this.cy1 = Math.min(this.startY, e.clientY);
+      this.radius = Math.abs(e.clientX - this.startX);
+
+
+
+      this.circles.forEach(circle => {
+
+        this.distancecir = Math.sqrt(Math.pow(this.cx1 - circle.x, 2) + Math.pow(this.cy1 - circle.y, 2));
+        console.log(circle.x, circle.y);
+
+
+        if (this.distancecir <= this.radius) {
+
+          var cir1 = document.getElementById(circle.id);
+          cir1.setAttribute('fill', 'red');
+
+        }
+
+        else {
+          var cir1 = document.getElementById(circle.id);
+
+          cir1.setAttribute('fill', 'blue');
+        }
+
+      });
+    }
+
+
+  }
+
+  //check the seats are inside the polygon or not
+
+  isPointInPoly(poly, pt) {
+    for (var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
+      ((poly[i][1] <= pt.y && pt.y < poly[j][1]) || (poly[j][1] <= pt.y && pt.y < poly[i][1])) && (pt.x < (poly[j][0] - poly[i][0]) * (pt.y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0]) && (c = !c);
+    return c;
+  }
+
+
+
+  onclick(e) {
+    {
+      if (this.drawSeat == true) {
+
+
+        if ((this.count) % 2 == 0) {
+          this.classname = "visible";
+          var x = e.clientX;
+          var y = e.clientY;
+          this.x0 = x;
+          this.y0 = y;
+          this.x5 = x;
+          this.y5 = y;
+        }
+        else {
+          this.classname = "invisible";
+          this.fill = "red"
+          var x1 = e.clientX;
+          var y1 = e.clientY;
+          var r = 7;
+          this.distance = Math.sqrt(Math.pow((x1 - this.x0), 2) + Math.pow((y1 - this.y0), 2));
+          this.seats = Math.round(this.distance / 16);
+          this.gradient = (y1 - this.y0) / (x1 - this.x0);
+          for (var i = 0; i < this.seats; i++) {
+            if (this.x0 < x1) {
+              this.x3 = this.x0 + Math.sqrt(Math.pow(16, 2) / (1 + Math.pow(this.gradient, 2)));
+            }
+            else {
+              this.x3 = this.x0 - Math.sqrt(Math.pow(16, 2) / (1 + Math.pow(this.gradient, 2)));
+            }
+            this.y3 = this.gradient * (this.x3 - this.x0) + this.y0;
+            const cir1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            this.x4 = (this.x0 + this.x3) / 2;
+            this.y4 = (this.y0 + this.y3) / 2;
+            cir1.setAttribute("cx", this.x4);
+            cir1.setAttribute("cy", this.y4);
+            cir1.setAttribute("r", '7');
+            cir1.setAttribute('id', this.value)
+            cir1.setAttribute('fill', "blue")
+            document.getElementById('group').appendChild(cir1);
+            // document .getElementById ('group2'). appendChild ( cir1 );
+            var Circle = function (x, y, radius, id, fillStyle) {
+              this.x = x;
+              this.y = y;
+              this.radius = radius;
+              this.id = id;
+              this.fill = fillStyle;
+            }
+            var circle = new Circle(this.x4, this.y4, 7, this.value, this.fill);
+            this.value++;
+            this.x0 = this.x3;
+            this.y0 = this.y3;
+            this.circles.push(circle);
+          }
+
+        }
+      }
+
+
+      //select seats by drawing custom shapes
+      console.log(this.startX, this.endX);
+      if (this.selectedElement == "svg" && this.allocate == true && this.ismouseDown == false && this.startX == this.endX && this.startY == this.endY) {
+        console.log("drawPolygon")
+        this.points = "";
+        this.polygonM.push([e.clientX, e.clientY]);
+        const cir1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        this.manupulateID = this.polygonM.length - 1;
+        cir1.setAttribute("cx", e.clientX);
+        cir1.setAttribute("cy", e.clientY);
+        cir1.setAttribute("r", '5');
+        cir1.setAttribute('id', this.manupulateID);
+        cir1.setAttribute('fill', "green");
+        cir1.setAttribute('class', "manupulate")
+        document.getElementById('group').appendChild(cir1);
+
+        this.manupulatePoints.push(cir1);
+        this.polygonM.forEach(points => {
+          this.points = this.points + points[0] + "," + points[1] + " ";
+
+        });
+        console.log(this.polygonM);
+
+
+
+
+        this.circles.forEach(cir => {
+          this.polygonC = [];
+          this.polygonC.push({ 'x': cir.x, 'y': cir.y });
+          if ((this.isPointInPoly(this.polygonM, { 'x': cir.x, 'y': cir.y })) == true) {
+            var cir1 = document.getElementById(cir.id);
+
+            cir1.setAttribute('fill', 'red');
+            this.elements.push(cir);
+          }
+          else {
+            var cir1 = document.getElementById(cir.id);
+
+            cir1.setAttribute('fill', 'blue');
+          }
+        });
+
+      }
+      if (this.letters == true) {
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', e.clientX);
+        text.setAttribute('y', e.clientY);
+        text.setAttribute('id', this.textid + "T");
+        text.setAttribute('fontsize', '12');
+
+        // console.log(e.clientX);
+        // console.log(e.clientY);
+
+        text.setAttribute('fill', "red");
+        text.textContent = 'text';
+        text.style.fontWeight = 'normal';
+        text.style.fontStyle = 'normal';
+        text.style.color = 'black';
+        text.style.fontSize = '12';
+
+        document.getElementById('svg').appendChild(text);
+
+        this.letters = false;
+        this.textid++;
+
+
+      }
+
+      //select the text
+      var t1 = e.target.id;
+      console.log(t1);
+      this.count = this.count + 1;
+    }
+    this.selectedElement = e.target.id;
+
+    console.log(this.selectedClass);
+    if (this.allocate == true && this.selectedElement != "svg" && this.ismouseDown == false) {
+      this.polygonM = [];
+      this.manupulateID = 1;
+      this.manupulatePoints.forEach(element => {
+
+        element.remove();
+
+      });
+
+
+      var allocate = document.getElementById(this.selectedElement);
+      allocate.setAttribute('fill', "red");
+    }
+  }
+  startDrag(e) {
+    this.points = "";
+    this.selectedManupulate = e.target.id;
+   this.ManupulateClass=e.target.classList.value;
+    console.log(e.target.classList.value);
+    // console.log(this.ManupulateClass);
+    this.selectedElement = e.target.id;
+    this.startX = e.clientX;
+    this.startY = e.clientY;
+    this.ismouseDown = true;
+    var rec = document.getElementById("zoom_area");
+    var cir = document.getElementById("circleZoom");
+    this.stroke = "blue";
+    this.fill3 = "transparent";
+    if (this.allocate == true && this.selectedElement == "svg" && this.points == "") {
+      this.elements = [];
+      rec.setAttribute('stroke', this.stroke);
+      rec.setAttribute('fill', this.fill3);
+      rec.setAttribute('class', "visible");
+    }
+    if (this.selectCircle == true) {
+      cir.setAttribute('stroke', this.stroke);
+      cir.setAttribute('fill', this.fill3);
+      cir.setAttribute('class', "visible");
+    }
+    this.currentX = e.clientX;
+    this.currentY = e.clientY;
+
+
+
+
+  }
+  endDrag(e) {
+    this.selectedClass="";
+    // console.log("working polygon");
+    this.endX = e.clientX;
+    this.endY = e.clientY;
+    // console.log(this.polygonM);
+    if (this.allocate == true && this.selectedElement == "svg") {
+
+      this.elements = [];
+      this.startX2 = Math.min(this.startX, e.clientX);
+      this.startY2 = Math.min(this.startY, e.clientY);
+      this.width = Math.abs(e.clientX - this.startX);
+      this.height = Math.abs(e.clientY - this.startY);
+
+      // console.log(this.startX,this.startY)
+
+      this.circles.forEach(circle => {
+
+
+
+
+        if ((circle.x >= this.startX2 && circle.x <= (this.startX2 + this.width)) && (circle.y >= this.startY2 && circle.y <= (this.startY2 + this.height))) {
+          this.elements.push(circle);
+          // console.log(circle);
+        }
+
+
+
+
+
+      });
+    }
+
+
+    if (this.selectCircle == true) {
+      this.elements = [];
+      this.cx1 = Math.min(this.startX, e.clientX);
+      this.cy1 = Math.min(this.startY, e.clientY);
+      this.radius = Math.abs(e.clientX - this.startX);
+
+      this.circles.forEach(circle => {
+
+
+
+        this.distancecir = Math.sqrt(Math.pow(this.cx1 - circle.x, 2) + Math.pow(this.cy1 - circle.y, 2));
+        // console.log(circle.x,circle.y);
+
+
+        if (this.distancecir <= this.radius) {
+          this.elements.push(circle);
+          // console.log(circle);
+        }
+
+      });
+    }
+
+    if (this.dragElements == true) {
+
+      this.dargArray.forEach(cir => {
+        cir.circle.x = cir.dx;
+        // console.log(cir)
+        cir.circle.y = cir.dy;
+      });
+    }
+    if (this.drawCustom == true) {
+      //  console.log(this.polygonM);
+    }  // console.log(this.circles);
+    this.ismouseDown = false;
+    this.rotateText = false;
+    this.stroke = "transparent";
+    var rec = document.getElementById("zoom_area");
+    var cir = document.getElementById("circleZoom");
+
+    rec.setAttribute('stroke', this.stroke);
+    cir.setAttribute('stroke', this.stroke);
+    // this.dragElements=false;
+    // console.log(this.elements);
+
+
+
+  }
+  select() {
+    this.points = "";
+    this.selectMultiple = true;
+    this.drawSeat = false;
+    this.elements = [];
+    this.dragElements = false;
+    this.selectCircle = false;
+    this.drawCustom = false;
+  }
+  selectCir() {
+    this.points = "";
+    this.selectCircle = true;
+    this.dragElements = false;
+    this.elements = [];
+    this.selectMultiple = false;
+    this.drawSeat = false;
+    this.drawCustom = false;
+  }
+  draw() {
+    this.points = "";
+    this.drawSeat = true;
+    this.dragElements = false;
+    this.selectMultiple = false;
+    this.selectCircle = false;
+    this.allocate == false;
+    this.drawCustom = false;
+  }
+
+  drag() {
+    this.points = "";
+    this.dragElements = true;
+    this.selectMultiple = false;
+    this.drawSeat = false;
+    this.selectCircle = false;
+    this.drawCustom = false;
+
+  }
+  polygon() {
+    this.dragElements = false;
+    this.selectMultiple = false;
+    this.drawSeat = false;
+    this.selectCircle = false;
+    this.drawCustom = true;
+  }
+
+  allocateMode() {
+    this.drawSeat = false;
+    this.allocate = true;
+  }
+}
