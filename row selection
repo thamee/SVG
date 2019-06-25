@@ -1,0 +1,476 @@
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  title = 'my-app';
+  cx:number;
+  cy:number;
+  x0:any; x2:any; y2:any; x3:any; y3:any;x4:any; y4:any; x5:any;y5:any; x6:any; y6:any; classname:string; y0:any;
+  count:number=0;
+  gradient:number;
+  r:number;
+  distance:any;
+ circles=[];
+ seats:number;
+ positionx:any;
+ fill:string;
+ positiony:any;
+ selectSingle:boolean=false;
+ deleteMultiple:boolean=false;
+ selectMultiple:boolean=false;
+ id:any=1;
+ value:any=1;
+ k:any=1;
+ positionx2: number;
+ positiony2: number;
+ Aseats = [];
+ preview:boolean=false;
+ removeSeats=[];
+ rectangles=[];
+ pos:any;
+currentPosition: { x: number, y: number } = {
+                  x: 0,
+                  y: 0  
+                  }
+  hovercol: string;
+  positionMove: number;
+  positionMovey: number;
+  nodes: any[];
+  width: number;
+  height: number;
+  numnodes: number;
+  angle: number;
+  x: number;
+  y: number;
+  rad: any;
+  centerx: any;
+  centery: any;
+  radius: any;
+  wid: any;
+  height1:any;
+  x7:any;
+  y7:any;
+  target:any;
+  draw:boolean=false;
+  rectId: any=0;
+  x8: any;
+  y8: any;
+  curveSeats=[];
+  arc=[];
+  className: any;
+  group: any;
+  start: string;
+  d: string;
+  end: string;
+  startX: any;
+  startY: any;
+  midX: number;
+  midY: number;
+  intersections: number;
+  space:number=12;
+  m: number;
+  initialx: number;
+  initialy: number;
+  width1: number;
+  height2: number;
+  stroke: string;
+  selected: any;
+  class:any=1;
+  selectedPath: any;
+  pathvar: any;
+  copied: any;
+  trans: any;
+  rec: any;
+  groups=[];
+  ISmousedown: boolean=false;
+  startPointX: any;
+  startPointY: any;
+  endX: any;
+  endY: any;
+  rows=[];
+  startX2: number;
+  startY2: number;
+  maxspacex:any=0;
+  minspacex:any=100000;;
+  maxspacey:any=0;;
+  minspacey:any=100000;;
+  temp: any;
+  
+ 
+  ngOnInit() {}
+  
+   addCircleToSVG(x, y,c,translate){
+    var  svg = document.getElementById("svg");
+    const circle = document.createElementNS("http://www.w3.org/2000/svg",'circle');
+    circle.setAttribute("cx", x);
+    circle.setAttribute("cy", y);
+    circle.setAttribute("r", "5");
+    circle.setAttribute("fill", "#8888ff");
+    circle.setAttribute('class', c);
+    circle.setAttribute('transform', translate);
+    svg.appendChild(circle);
+    this.curveSeats.push(circle);
+    
+  }
+
+ DRAWLine(d,translate)
+ {
+  const path2 = document.createElementNS("http://www.w3.org/2000/svg",'path');
+  path2.setAttribute('d', d);
+  path2.setAttribute('stroke', 'red');
+  path2.setAttribute('transform', translate);
+  var  svg = document.getElementById("svg");
+  path2.setAttribute('class', this.class);
+  svg.appendChild(path2);
+  var bb=path2.getBBox();
+  this.DrawRectangle(bb.x,bb.y,bb.height,bb.width,translate,this.class);
+  this.DrawCircles(path2,this.class,translate);
+  
+  
+  this.class++;
+ 
+ 
+  
+  
+ }
+ DrawCircles(d,c,translate)
+ {
+  
+   // The first important function getTotalLength
+  let totalLength = d.getTotalLength();
+  this.intersections =Math.floor((totalLength)/12);
+ for(var i = 0; i <= this.intersections; i ++){
+  let distance =Math.trunc( i * 1/this.intersections * totalLength);
+  // The second important function getPointAtLength;
+  var point = d.getPointAtLength(distance);
+  this.addCircleToSVG(point.x, point.y,c,translate);
+}
+ }
+ DrawRectangle(x,y,height,width,translate,c)
+ {
+  const rec = document.createElementNS("http://www.w3.org/2000/svg",'rect');
+  rec.setAttribute("x", x);
+  rec.setAttribute("y", y);
+  rec.setAttribute("height", height);
+  rec.setAttribute("width", width);
+  rec.setAttribute('transform', translate);
+  rec.setAttribute('fill', "transparent");
+  rec.setAttribute('class', c);
+  this.groups.push(rec);
+  var  svg = document.getElementById("svg");
+  svg.appendChild(rec);
+ }
+ CurvePathPlus()
+ {
+  var  path = document.querySelector("path");
+  this.midY=this.midY+5;
+  this.midX=this.midX+Math.sqrt(Math.pow(5,2)/(1+Math.pow(this.gradient,2)));
+  
+  this.d=this.start+"S"+" "+this.midX+" "+this.midY+" "+this.end;
+  // path.setAttribute('d',this.d) ;
+  // this.DRAWLine(this.d);
+  var  path = document.querySelector("path");
+   // The first important function getTotalLength
+  let totalLength = path.getTotalLength();
+  this.space=Math.floor((totalLength-10*this.curveSeats.length)/this.curveSeats.length)+11;
+  this.intersections =Math.floor((totalLength)/this.space);
+  var i=0;
+  path.setAttribute('d',this.d);
+ this.curveSeats.forEach(cir => {
+  let distance =Math.trunc( i * 1/this.intersections * totalLength);
+  // The second important function getPointAtLength;
+  var point = path.getPointAtLength(distance);
+  // console.log(i);
+  // console.log(this.curveSeats.length);
+  if(i!=0  && (i!==(this.curveSeats.length-1)))
+  {
+    cir.setAttribute("cx",point.x);
+    cir.setAttribute("cy",point.y);
+   
+  }
+  else{
+    console.log(i);
+  }
+  i++;
+   
+ });
+ }
+ CurvePathMinus()
+ {
+  var  path = document.querySelector("path");
+  this.midY=this.midY-5;
+  this.midX=this.midX-Math.sqrt(Math.pow(5,2)/(1+Math.pow(this.gradient,2)));
+  
+  this.d=this.start+"S"+" "+this.midX+" "+this.midY+" "+this.end;
+  // path.setAttribute('d',this.d) ;
+  // this.DRAWLine(this.d);
+  var  path = document.querySelector("path");
+   // The first important function getTotalLength
+  let totalLength = path.getTotalLength();
+  this.space=Math.floor((totalLength-10*this.curveSeats.length)/this.curveSeats.length)+11;
+  this.intersections =Math.floor((totalLength)/this.space);
+  var i=0;
+  path.setAttribute('d',this.d);
+ this.curveSeats.forEach(cir => {
+  let distance =Math.trunc( i * 1/this.intersections * totalLength);
+  // The second important function getPointAtLength;
+  var point = path.getPointAtLength(distance);
+  // console.log(i);
+  // console.log(this.curveSeats.length);
+  if(i!=0  && (i!==(this.curveSeats.length-1)))
+  {
+    cir.setAttribute("cx",point.x);
+    cir.setAttribute("cy",point.y);
+   
+  }
+  else{
+    console.log(i);
+  }
+  i++;
+   
+ });
+ }
+ appendToContainer(e)
+ {
+ 
+   console.log("working");
+   if(this.draw==true)
+   {
+    if((this.count)%2==0)
+    {
+        this.start="M"+e.clientX+" "+e.clientY+" ";  
+        this.startX=e.clientX;
+        this.startY=e.clientY; 
+        console.log(this.start);
+    }
+    else{
+      this.end=e.clientX+" "+e.clientY;
+        this.d=this.start+"L"+this.end;
+        this.m=(e.clientY-this.startY)/(e.clientX-this.startX);
+        this.gradient=1/this.m;
+        this.midX=(this.startX+e.clientX)/2;
+        this.midY=(this.startY+e.clientY)/2;
+        this.DRAWLine(this.d,"translate(0,0)");
+       
+       console.log(this.count);
+    }
+    this.count++;
+   }
+   else{
+     this.selected=e.target.classList.value;
+     this.selectedPath=document.getElementsByClassName(this.selected);
+     console.log(this.selectedPath);
+     this.pathvar=this.selectedPath[0];
+     this.rec=this.selectedPath[1];
+    
+     if(this.startPointX==this.endX && this.startPointY==this.endY)
+     {
+       var rec=document.getElementById("zoomarea");
+       rec.setAttribute('stroke','null');
+       
+      
+     
+      this.groups.forEach(element => {
+        if(element.classList.value== this.selected)
+        {
+         element.setAttribute('stroke',"blue");
+          console.log("selected");
+          this.rows.push( this.pathvar);
+        }
+        else{
+         element.setAttribute('stroke',"null");
+        }
+      });
+     
+     }
+     
+    
+   }
+   
+   
+  }
+ selectrows(e)
+ {
+if(this.ISmousedown==true && this.draw==false)
+{
+      this.width = Math.abs(e.clientX - this.startPointX);
+      this.startX2 = Math.min(this.startPointX, e.clientX);
+      this.startY2 = Math.min(this.startPointY, e.clientY);
+      this.width = Math.abs(e.clientX - this.startPointX);
+      this.height = Math.abs(e.clientY - this.startPointY);
+  this.selected=e.target.classList.value;
+     this.selectedPath=document.getElementsByClassName(this.selected);
+   
+     this.pathvar=this.selectedPath[0];
+     this.rec=this.selectedPath[1];
+   
+     this.groups.forEach(element => {
+     
+     if (this.startX2<element.getAttribute('x') &&( (element.getAttribute('x')<(this.startX2+this.width))&& this.startY2<element.getAttribute('y') && (element.getAttribute('y')<(this.startY2+this.height)))||  
+      ((this.startX2<(parseFloat(element.getAttribute('x'))+parseFloat(element.getAttribute('width')))) &&(parseFloat(element.getAttribute('x'))+parseFloat(element.getAttribute('width')))<(this.startX2+this.width))&&
+       (this.startY2<(parseFloat(element.getAttribute('y'))+parseFloat(element.getAttribute('height')))) && 
+      ((parseFloat(element.getAttribute('y'))+parseFloat(element.getAttribute('height')))<(this.startY2+this.height)))
+      
+       {
+     console.log(document.getElementsByClassName(element.classList.value));
+      //  element.setAttribute('stroke','blue');
+      //  console.log(cir.classList.value==element.classList.value);
+      //  this.curveSeats.forEach(cir => {
+      //   console.log(cir.classList.value==element.classList.value);
+      //    if(cir.classList.value==element.classList.value)
+      //    {
+      //     //  cir.setAttribute('fill',"red");
+      //    }
+      //   //  else{
+      //   //   cir.setAttribute('fill',"blue");
+      //   //  }
+         
+      //  });
+      }
+      else{
+        element.setAttribute('stroke',"null");
+      }
+       
+     });
+     
+   
+ 
+}
+ }
+ copy()
+ {
+   this.copied=this.pathvar;  
+ }
+ paste()
+ {
+  
+   this.groups.forEach(row => {
+    if (
+      this.startPointX<row.getAttribute('x') 
+      && row.getAttribute('x')<this.endX 
+      && this.startPointY<row.getAttribute('y')
+      && (row.getAttribute('y')<(this.endY))
+      ||  
+    (this.startPointX<(parseFloat(row.getAttribute('x'))+parseFloat(row.getAttribute('width'))))
+     &&(parseFloat(row.getAttribute('x'))+parseFloat(row.getAttribute('width'))<this.endX)
+     &&(this.startPointY<(parseFloat(row.getAttribute('y'))+parseFloat(row.getAttribute('height')))) 
+     && ((parseFloat(row.getAttribute('y'))+parseFloat(row.getAttribute('height')))<this.endY))
+     
+
+    
+     
+     {
+      this.selectedPath=document.getElementsByClassName(row.getAttribute('class'));
+   
+      this.pathvar=this.selectedPath[0];
+      this.DRAWLine( this.pathvar.getAttribute('d'),"translate(30,30)");
+     }
+  
+   });
+   console.log(this.groups);
+
+ }
+ drawSeats()
+ {
+   this.draw=true;
+ }
+ cursor()
+ {
+   this.draw=false;
+ }
+ startDrag(e)
+ {
+  var rec = document.getElementById("zoom_area");
+ 
+      rec.setAttribute('class', "visible");
+      rec.setAttribute('stroke', "blue");
+      rec.setAttribute('fill', "none");
+   this.ISmousedown=true;
+   this.startPointX=e.clientX;
+   this.startPointY=e.clientY;
+ }
+ enddrag(e)
+ {
+  this.maxspacex=0;
+  this.minspacex=100000;;
+  this.maxspacey=0;;
+  this.minspacey=100000;;
+   this.ISmousedown=false;
+   this.endX=e.clientX;
+   this.endY=e.clientY;
+   if(this.startPointX>this.endX)
+   {
+     this.temp=this.startPointX;
+     this.startPointX=this.endX;
+     this.endX=this.temp;
+   }
+   if(this.startPointY>this.endY)
+   {
+     this.temp=this.startPointY;
+     this.startPointY=this.endY;
+     this.endY=this.temp;
+   }
+   
+      console.log(this.groups);
+  this.groups.forEach(row => {
+    
+    if (
+      this.startPointX<row.getAttribute('x') 
+      && row.getAttribute('x')<this.endX 
+      && this.startPointY<row.getAttribute('y')
+      && (row.getAttribute('y')<(this.endY))
+      ||  
+    (this.startPointX<(parseFloat(row.getAttribute('x'))+parseFloat(row.getAttribute('width'))))
+     &&(parseFloat(row.getAttribute('x'))+parseFloat(row.getAttribute('width'))<this.endX)
+     &&(this.startPointY<(parseFloat(row.getAttribute('y'))+parseFloat(row.getAttribute('height')))) 
+     && ((parseFloat(row.getAttribute('y'))+parseFloat(row.getAttribute('height')))<this.endY))
+     {
+       console.log(row);
+      this.curveSeats.forEach(seats => {
+        if(seats.classList.value==row.classList.value)
+        {
+// seats.setAttribute('fill',"red");
+this.minspacex=Math.min(this.minspacex,parseFloat(seats.getAttribute('cx')));
+this.maxspacex=Math.max(this.maxspacex,parseFloat(seats.getAttribute('cx')));
+console.log(this.minspacex,this.maxspacex);
+this.minspacey=Math.min(this.minspacey,parseFloat(seats.getAttribute('cy')));
+this.maxspacey=Math.max(this.maxspacey,parseFloat(seats.getAttribute('cy')));
+
+
+
+        }
+        else{
+          // seats.setAttribute('fill',"blue");
+        }
+        
+      });
+     }
+
+    
+  });
+ 
+      this.startX2 = this.minspacex;
+      this.startY2 = this.minspacey;
+      this.width = (this.maxspacex-this.minspacex)
+      this.height = (this.maxspacey-this.minspacey);
+        
+ }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+<svg  id="svg"  xmlns="http://www.w3.org/2000/svg" width="100%" height="500" (click)="appendToContainer($event)" (mousedown)="startDrag($event)" (mouseup)="enddrag($event)" (mousemove)="selectrows($event)"style="background: aquamarine">
+    <rect id="zoom_area" [attr.x]="startX2" [attr.y]="startY2" [attr.width]="width" [attr.height]="height"/>  
+</svg>
+
+<button mat-button (click)="CurvePathPlus()" style="background: rgb(9, 97, 97)">+</button>
+<button mat-button (click)="CurvePathMinus()" style="background: rgb(9, 97, 97)">-</button>
+<button mat-button (click)="drawSeats()" style="background: rgb(9, 97, 97)">drawSeats</button>
+<button mat-button (click)="cursor()" style="background: rgb(9, 97, 97)">cursor</button>
+<button mat-button (click)="copy()" style="background: rgb(9, 97, 97)">copy</button>
+<button mat-button (click)="paste()" style="background: rgb(9, 97, 97)">paste</button>
+
+
