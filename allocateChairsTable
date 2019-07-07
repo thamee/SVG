@@ -1,0 +1,379 @@
+import { Component, OnInit } from '@angular/core';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { FormsModule } from '@angular/forms';
+FormsModule
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  selectedClass: any;
+  enddragX: any;
+  enddragY: any;
+  startdragX: any;
+  startdragY: any;
+  startDragBool: boolean;
+  shapes = [];
+  image = [];
+
+  title = 'tableplan';
+  polygonM = [];
+  points: string = "";
+  manupulateID: any = 0;
+  manupulatePoints = [];
+  selectedID: any;
+  id: number = 1;
+  sumx: any = 0;
+  sumY: any = 0;
+  count: number = 1;
+  pointmidX: any;
+  pointmidY: any;
+  CPolygonM = [];
+  prevX: any;
+  prevY: any;
+  currentX: any;
+  currentY: any;
+  midX: any;
+  midY: any;
+  cirP = [];
+  finishId: any;
+  pointCir: any[];
+  changeId: any;
+  edgeManupulate = true;
+  totalLength: any;
+  intersections: number;
+  customTables = [];
+  seatCount;
+  imageTest: string = 'data:image/jpeg;base64,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';
+  maxseat: number;
+  ngOnInit() {
+    
+
+  }
+  drawPolygon(e) {
+
+    if ((this.startdragX == this.enddragX) && (this.startdragY == this.enddragY)) {
+
+      this.sumx = e.clientX + this.sumx;
+      this.sumY = e.clientY + this.sumY;
+
+      this.polygonM.push([e.clientX, e.clientY]);
+
+      const cir1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      cir1.setAttribute("cx", e.clientX);
+      cir1.setAttribute("cy", e.clientY);
+      cir1.setAttribute("r", '5');
+      cir1.setAttribute('id', this.manupulateID);
+      cir1.setAttribute('fill', "green");
+      cir1.setAttribute('class', "manupulate");
+      document.getElementById('svg').appendChild(cir1);
+      this.manupulatePoints.push(cir1);
+      this.manupulateID = this.manupulateID + 2;
+      this.drawShape();
+    }
+    this.count++;
+  }
+  startDrag(e) {
+    this.selectedID = e.target.id;
+    this.selectedClass = e.target.classList.value;
+    this.startdragX = e.clientX;
+    this.startdragY = e.clientY;
+    this.startDragBool = true;
+
+  }
+  move(e) {
+    if (this.startDragBool == true && this.selectedClass == "curve") {
+      console.log(this.CPolygonM);
+      console.log(this.selectedID);
+      this.manupulatePoints.forEach(element => {
+        console.log(element.id);
+        if (this.selectedID == element.id) {
+          if (this.selectedID % 2 == 0) {
+            this.midX = (e.clientX + this.manupulatePoints[element.id - 1].cx) / 2;
+            this.midY = (e.clientY + this.manupulatePoints[element.id - 1][1]) / 2;
+            this.changeId = this.selectedID - 1;
+            console.log(document.getElementById(this.changeId));
+            this.CPolygonM[element.id - 1] = [this.midX, this.midY];
+            document.getElementById(this.changeId).setAttribute('cx', this.midX);
+            document.getElementById(this.changeId).setAttribute('cy', this.midY);
+          }
+          this.CPolygonM[element.id] = [e.clientX, e.clientY];
+          element.setAttribute('cx', e.clientX);
+          element.setAttribute('cy', e.clientY);
+
+        }
+      });
+      this.AdjustShape();
+    }
+
+
+    if (this.edgeManupulate == true && this.startDragBool == true) {
+      console.log(this.polygonM);
+      this.manupulatePoints.forEach(element => {
+
+        if (this.selectedID == element.id) {
+          if (element.id == 0) {
+            this.polygonM[element.id] = [e.clientX, e.clientY];
+          }
+          else {
+            this.polygonM[element.id - (element.id / 2)] = [e.clientX, e.clientY];
+          }
+
+          element.setAttribute('cx', e.clientX);
+          element.setAttribute('cy', e.clientY);
+
+        }
+      });
+
+      this.drawShape();
+    }
+
+
+  }
+
+  enddrag(e) {
+    this.enddragX = e.clientX;
+    this.enddragY = e.clientY;
+    this.startDragBool = false;
+  }
+  drawShape() {
+    this.points = "M";
+    var i = 1;
+    this.polygonM.forEach(points => {
+
+
+      this.points = this.points + points[0] + "," + points[1] + " ";
+      if (i != this.polygonM.length) {
+        this.points = this.points + "L";
+      }
+      i++;
+    });
+    this.points = this.points + "z";
+  }
+
+
+  AdjustShape() {
+    this.points = "M";
+    var i = 0;
+    this.CPolygonM.forEach(points => {
+      if (i == 0) {
+        this.points = this.points + points[0] + "," + points[1] + " ";
+      }
+      else {
+        if (i % 2 != 0) {
+          this.points = this.points + "Q";
+          this.points = this.points + points[0] + "," + points[1] + " ";
+
+        }
+        else {
+          this.points = this.points + points[0] + "," + points[1] + " ";
+        }
+      }
+
+
+      i++;
+    });
+    this.points = this.points + "z";
+  }
+
+
+  saveShape() {
+    const cir1 = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+    const ele = document.getElementById('customZoom');
+    this.manupulateID=0;
+    this.edgeManupulate = true;
+    this.CPolygonM=[];
+    const e = {
+      box: ele.getBBox(),
+      d:ele.getAttribute('d')
+    }
+    console.log(e)
+    this.shapes.push(e);
+    this.points="";
+    this.polygonM=[];
+    this.id++;
+
+    
+    this.polygonM = [];
+    this.manupulatePoints.forEach(element => {
+      element.remove();
+    });
+    this.manupulatePoints = [];
+    this.drawShape();
+  }
+  finish() {
+    this.edgeManupulate = false;
+    this.finishId = 1;
+    this.pointCir = [];
+    this.points = "M";
+    console.log(this.polygonM);
+
+    var i = 0;
+    this.manupulateID = this.polygonM.length - 2;
+    this.polygonM.forEach(points => {
+
+      if (i == 0) {
+        this.points = this.points + points[0] + "," + points[1] + " ";
+        this.CPolygonM.push([points[0], points[1]]);
+
+
+      }
+
+      else if (i > 0) {
+        this.prevX = this.polygonM[i - 1][0];
+        this.prevY = this.polygonM[i - 1][1];
+        this.currentX = this.polygonM[i][0];
+        this.currentY = this.polygonM[i][1];
+        this.midX = (this.prevX + this.currentX) / 2;
+        this.midY = (this.prevY + this.currentY) / 2;
+        const cir = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        cir.setAttribute("cx", this.midX);
+        cir.setAttribute("cy", this.midY);
+        cir.setAttribute("r", '5');
+        cir.setAttribute('id', this.finishId);
+        this.finishId = this.finishId + 2;;
+        cir.setAttribute('fill', "blue");
+        cir.setAttribute('class', "curve");
+        document.getElementById('svg').appendChild(cir);
+        this.manupulatePoints.push(cir);
+
+
+        if (i != this.polygonM.length) {
+          this.points = this.points + "Q";
+        }
+        this.points = this.points + "" + this.midX + "," + this.midY + " " + this.currentX + "," + this.currentY + " ";
+        this.CPolygonM.push([this.midX, this.midY]);
+        this.CPolygonM.push([this.currentX, this.currentY]);
+
+      }
+
+
+      i++;
+
+    });
+    this.prevX = this.polygonM[0][0];
+    this.prevY = this.polygonM[0][1];
+    this.currentX = this.polygonM[this.polygonM.length - 1][0];
+    this.currentY = this.polygonM[this.polygonM.length - 1][1];
+    this.midX = (this.prevX + this.currentX) / 2;
+    this.midY = (this.prevY + this.currentY) / 2;
+    const cir = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    cir.setAttribute("cx", this.midX);
+    cir.setAttribute("cy", this.midY);
+    cir.setAttribute("r", '5');
+    cir.setAttribute('id', this.finishId);
+    this.finishId = this.finishId + 2;
+    cir.setAttribute('fill', "blue");
+    cir.setAttribute('class', "curve");
+    document.getElementById('svg').appendChild(cir);
+    this.manupulatePoints.push(cir);
+
+
+    if (i != this.polygonM.length) {
+      this.points = this.points + "Q";
+    }
+    this.points = this.points + "" + this.midX + "," + this.midY + " " + this.currentX + "," + this.currentY + " ";
+    this.CPolygonM.push([this.midX, this.midY]);
+    this.CPolygonM.push([this.prevX, this.prevY]);
+
+
+    this.manupulatePoints.forEach(element => {
+      if (element.classList.value == "manupulate") {
+        element.remove();
+      }
+
+    });
+    this.points = this.points + "z";
+    console.log(this.CPolygonM);
+  }
+  allocateSeat() {
+    var path = document.querySelector("path");
+
+    this.totalLength = path.getTotalLength();
+    this.intersections = Math.floor((this.totalLength) / ((10)+(this.totalLength/(this.seatCount+2))));
+    for (var i = 0; i <=this.intersections; i++) {
+      let distance = Math.trunc(i * 1 / this.intersections * this.totalLength);
+// console.log(i);
+      var point1 = path.getPointAtLength(distance);
+      // console.log(this.totalLength);
+      const cir = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      cir.setAttribute("cx", point1.x);
+      cir.setAttribute("cy", point1.y);
+      cir.setAttribute("r", '5');
+      cir.setAttribute("fill", '5');
+      if(i!=this.intersections)
+      {
+        document.getElementById('svg').appendChild(cir);
+      }
+      else{
+        console.log(this.intersections,i);
+      }
+     
+    }
+    this.manupulatePoints.forEach(element => {
+      if (element.classList.value == "curve") {
+        element.remove();
+      }
+
+    });
+    
+
+  }
+  saveImage() {
+
+
+    
+    this.manupulatePoints.forEach(element => {
+      if (element.classList.value == "curve") {
+        element.remove();
+      }
+
+    });
+
+    // var svg = document.getElementById('svg');
+    // var xml = new XMLSerializer().serializeToString(svg);
+    // var svg64 = btoa(xml);
+    // var b64Start = 'data:image/svg+xml;base64,';
+    // var image64 = b64Start + svg64;
+
+
+    
+    
+  }
+  checkSeat()
+  {
+    // var path = document.querySelector("path");
+
+    // this.totalLength = path.getTotalLength();
+    // this.maxseat = Math.floor((this.totalLength) / (12));
+    // console.log(this.maxseat);
+  }
+ 
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+<svg id="svg" style="background: aquamarine" xmlns="http://www.w3.org/2000/svg" (mousedown)="startDrag($event)"
+  (mouseup)="enddrag($event)" (mousemove)="move($event)" (click)="drawPolygon($event)" width="100%" height="500">
+  <g id="tableplan"></g>
+  <path id="customZoom" [attr.d]="points" style="fill:brown;stroke:purple;stroke-width:1" />
+
+</svg>
+<button (click)="saveShape()">SAVE</button>
+<button (click)="finish()">finish</button>
+
+<button (click)="saveImage()">Save as Image</button>
+
+<button (click)="allocateSeat()">Allocate Seats</button>
+<input type="number" [(ngModel)]="seatCount" min="0" [attr.max]="maxseat" (click)="checkSeat()" >
+<svg attr.viewBox='{{i.box.x}} {{i.box.y}} {{i.box.width}} {{i.box.height}}'width="80px" height="80px" *ngFor="let i of shapes">
+  <path  id="svg" [attr.d]=i.d style="fill:brown;stroke:purple;stroke-width:1"  />
+</svg>
+
+
+
+
+
+
